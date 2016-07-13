@@ -1,4 +1,4 @@
-// Requires element.classList.js
+// Requires ../lib/element.classList.js
 // ============================================
 // Call this function when you want to find an ancestor node
 // that contains the given className.
