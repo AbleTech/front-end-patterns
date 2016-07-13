@@ -1,0 +1,91 @@
+// Requires ../lib/element.matches.js
+// Requires ../utils/window.do_not_track.js
+// Requires ../utils/find_matching_parent_by_selector.js
+// Requires ./_ui.js
+(function(w,d,UI){
+
+	var CONSTANTS = {
+		EVENT_DATA_ATTRIBUTE: 'data-ga-event',
+		VALID_CLICK_SELECTORS: ['a', 'button', 'input[type="submit"]', 'input[type="button"]', 'input[type="image"]', 'input[type="reset"]'],
+		VALID_CHANGE_SELECTORS: ['textarea', 'input:not([type="submit"]):not([type="button"]):not([type="image"]):not([type="reset"])']
+	};
+
+	var googleAnalytics = function(){
+
+		/* Private *****************************************/
+		function _isMatchingElem(elem, eventType){
+			if (elem.getAttribute(CONSTANTS.EVENT_DATA_ATTRIBUTE)) {
+				return elem;
+			} else {
+				return _findMatchingParentBySelector(elem, '[' + CONSTANTS.EVENT_DATA_ATTRIBUTE + ']');
+			}
+		}
+		function _isAValidEventElement(elem, whitelistSelectors) {
+			var check = false;
+			for (var i=0; i<whitelistSelectors.length; i++) {
+				if (elem.matches(whitelistSelectors[i])) {
+					check = true;
+					break;
+				}
+			}
+			return check;
+		}
+		function _handleGAClickEvents(event){
+			var elem = _isMatchingElem(event.target, 'click');
+			if (elem && _isAValidEventElement(elem, CONSTANTS.VALID_CLICK_SELECTORS)) {
+				uiga.sendEvent(eventType, elem);
+			}
+		}
+		function _handleGAChangeEvents(event){
+			var elem = _isMatchingElem(event.target, 'change');
+			if (elem && _isAValidEventElement(elem, CONSTANTS.VALID_CHANGE_SELECTORS)) {
+				uiga.sendEvent(eventType, elem);
+			}
+		}
+		/***************************************************/
+
+		var uiga = this;
+
+		uiga.addScript = function(){
+			(function(i,s,o,g,r,a,m){
+				i['GoogleAnalyticsObject']=r;
+				i[r]=i[r]||function(){
+					(i[r].q=i[r].q||[]).push(arguments);
+				},
+				i[r].l=1*new Date();
+				a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];
+				a.async=1;
+				a.src=g;
+				m.parentNode.insertBefore(a,m);
+			})(w,d,'script','//www.google-analytics.com/analytics.js','ga');
+			uiga.startGA();
+			uiga.addGAEventHandlers();
+		};
+
+		uiga.addGAEventHandlers = function(){
+			document.addEventListener('click', _handleGAClickEvents);
+			document.addEventListener('change', _handleGAChangeEvents);
+		}
+
+		uiga.sendEvent = function(eventType, elem){
+			var eventCategory = elem.nodeName;
+			var eventLabel = elem.getAttribute(CONSTANTS.EVENT_DATA_ATTRIBUTE);
+			w.ga('send', 'event', eventCategory, eventType, eventLabel)
+		}
+
+		uiga.startGA = function(){
+			w.ga('create', '<%= ApplicationConfig::GoogleAnalytics::TRACKING_KEY %>', 'auto');
+			w.ga('send', 'pageview');
+		};
+
+		if (!w.doNotTrack) {
+			uiga.addScript();
+		}
+
+		return uiga;
+	}
+
+	UI.GoogleAnalytics = googleAnalytics;
+
+})(window, document, UI);

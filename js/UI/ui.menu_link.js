@@ -1,5 +1,5 @@
-// Requires ./_ui.js
 // Requires ../lib/element.classList.js
+// Requires ./_ui.js
 // ============================================
 // This UI function adds mobile menu capabilities to the main site navigation.
 // It also adds a mask element that should be positioned behind the open menu,
