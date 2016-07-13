@@ -1,3 +1,11 @@
+// Requires ./_ui.js
+// Requires ./lib/element.classList.js
+// ============================================
+// This UI function adds mobile menu capabilities to the main site navigation.
+// It also adds a mask element that should be positioned behind the open menu,
+// so that when it's clicked it closes the menu.
+// The menu can be programmatically opened/closed by calling the
+// `.openMenu()` and `.closeMenu()` methods respectively.
 (function(w, d, UI){
 
 	var CONSTANTS = {
