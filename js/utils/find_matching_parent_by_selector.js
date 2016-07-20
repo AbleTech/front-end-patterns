@@ -8,7 +8,6 @@ utils.findMatchingParentBySelector = function(elem, selector){
 	var currentElem = elem;
 	if (!currentElem || !selector) {
 		throw new Error('findMatchingParentBySelector: invalid parameters');
-		return null;
 	} else {
 		function checkForSelector(){
 			// Check if the current node matches the selector
