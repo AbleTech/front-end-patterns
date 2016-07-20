@@ -25,7 +25,7 @@
 			} else {
 				event.preventDefault();
 				var targetIndex = parseInt(elem.getAttribute(CONSTANTS.ANCHOR_DATA_ATTRIBUTE));
-				var tabContainer = _findMatchingParentBySelector(elem, '.' + CONSTANTS.CLASS_MATCH);
+				var tabContainer = utils.findMatchingParentBySelector(elem, '.' + CONSTANTS.CLASS_MATCH);
 				if (tabContainer) {
 					tabContainer.setAttribute(CONSTANTS.DATA_ATTRIBUTE, targetIndex);
 				}
