@@ -1,0 +1,22 @@
+{
+  "name": "front-end-patterns",
+  "version": "1.0.0",
+  "description": "A collection of JavaScript patterns we use at Abletech",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbleTech/front-end-patterns.git"
+  },
+  "author": "Shaun O'Connell <shaun@abletech.nz>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AbleTech/front-end-patterns/issues"
+  },
+  "homepage": "https://github.com/AbleTech/front-end-patterns#readme",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
+}

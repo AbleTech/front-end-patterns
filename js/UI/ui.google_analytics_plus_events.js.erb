@@ -17,7 +17,7 @@
 			if (elem.getAttribute(CONSTANTS.EVENT_DATA_ATTRIBUTE)) {
 				return elem;
 			} else {
-				return _findMatchingParentBySelector(elem, '[' + CONSTANTS.EVENT_DATA_ATTRIBUTE + ']');
+				return utils.findMatchingParentBySelector(elem, '[' + CONSTANTS.EVENT_DATA_ATTRIBUTE + ']');
 			}
 		}
 		function _isAValidEventElement(elem, whitelistSelectors) {

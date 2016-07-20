@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Mocha Tests</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="node_modules/mocha/mocha.css">
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="node_modules/mocha/mocha.js"></script>
+    <script src="node_modules/chai/chai.js"></script>
+    <script>mocha.setup('bdd');</script>
+
+    <!-- Source files                          -->
+    <!-- ===================================== -->
+    <!-- Libraries and polyfills -->
+    <script src="js/lib/element.classList.js"></script>
+    <script src="js/lib/element.matches.js"></script>
+    <script src="js/lib/window.debounce.js"></script>
+    <script src="js/lib/window.do_not_track.js"></script>
+    <!-- Utilities -->
+    <script src="js/utils/_utils.js"></script>
+    <script src="js/utils/find_matching_parent_by_selector.js"></script>
+    <script src="js/utils/is_positive_integer.js"></script>
+    <script src="js/utils/string_contains.js"></script>
+    <script src="js/utils/window.create_cors_request.js"></script>
+    <script src="js/utils/window.create_native_event.js"></script>
+    <!-- UI Plugins -->
+    <script src="js/UI/_ui.js"></script>
+    <script src="js/UI/ui.menu_link.js"></script>
+    <script src="js/UI/ui.tabs.js"></script>
+    <script>
+    </script>
+    <!-- Tests                                 -->
+    <!-- ===================================== -->
+    <script src="test/test.js"></script>
+    <script src="test/test.find_matching_parent_by_selector.js"></script>
+    <script src="test/test.is_positive_integer.js"></script>
+    <script src="test/test.string_contains.js"></script>
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
