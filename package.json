@@ -17,6 +17,8 @@
   "homepage": "https://github.com/AbleTech/front-end-patterns#readme",
   "dependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.5.3"
+    "connect": "^3.4.1",
+    "mocha": "^2.5.3",
+    "serve-static": "^1.11.1"
   }
 }
