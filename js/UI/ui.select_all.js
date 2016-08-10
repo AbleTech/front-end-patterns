@@ -1,8 +1,8 @@
 // Requires ./_ui.js
 // ============================================
 // This UI function finds all elements with the attribute data-select-all then
-//attaches a click event handler to it. When it is triggered, the event selects
-//all in the range.
+// attaches a click event handler to it. When it is triggered, the event selects
+// all in the range.
 
 (function(w, d, UI){
 
@@ -25,8 +25,9 @@
 		t.elements = new Array();
 
 		t.attachClickHandler = function(){
-			var len = t.elements.length;
-			for (i=0; i< len; i++){
+			var i = 0,
+			    len = t.elements.length;
+			for (i; i < len; i++){
 				var e = t.elements[i];
 				e.addEventListener('click', _selectAllClickHandler);
 				e.removeAttribute(CONSTANTS.DATA_ATTRIBUTE);
