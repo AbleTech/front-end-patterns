@@ -1,4 +1,5 @@
 // Requires ../lib/element.classList.js
+// Requires ../utils/window.create_native_event.js
 // Requires ./_ui.js
 // ============================================
 // This UI function adds dropdown menu capabilities to any element that matches
@@ -12,6 +13,7 @@
 	var CONSTANTS = {
 		CONTAINER_CLASS: 'dropdown_container',
 		LINK_CLASS: 'dropdown_link',
+		MENU_CLASS: 'dropdown_menu',
 		ACTIVE_CLASS: 'js_menu_active',
 		ACTIVE_BODY_CLASS: 'js_dropdown_menu_active',
 		MASK_ID: 'menu_mask'
@@ -43,6 +45,20 @@
 		var link = event.target;
 		(link.classList.contains(CONSTANTS.ACTIVE_CLASS)) ? _menuClose() : _menuOpen(link);
 	};
+	function _closeAllOpenMenus(){
+		var openLinks = document.querySelectorAll('.' + CONSTANTS.ACTIVE_CLASS);
+		var openLinksLen = openLinks.length;
+		if (openLinksLen) {
+			var i = 0;
+			for (i; i < openLinksLen; i++) {
+				var clickEvent = createNativeEvent('click');
+				openLinks[i].dispatchEvent(clickEvent);
+			}
+		}
+	}
+	function _dropdownClickHandler() {
+		_closeAllOpenMenus();
+	}
 
 	function DropdownMenu() {
 		var ddm = this;
@@ -54,6 +70,7 @@
 			for (var i=0; i < ddm.elements.length; i++) {
 				var element = ddm.elements[i];
 				element.querySelector('.' + CONSTANTS.LINK_CLASS).addEventListener('click', _containerClickHandler);
+				element.querySelector('.' + CONSTANTS.MENU_CLASS).addEventListener('click', _dropdownClickHandler);
 			}
 		}
 		ddm.init = function() {
@@ -64,7 +81,6 @@
 		}
 		return ddm;
 	};
-
 	UI.DropdownMenu = DropdownMenu;
 
 })(window, document, UI);
