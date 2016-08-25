@@ -1,6 +1,6 @@
 # Front-end Patterns
 
-A collection of JS we use across projects at Abletech.
+A collection of JS and SCSS we use across projects at Abletech.
 
 ## Testing
 
