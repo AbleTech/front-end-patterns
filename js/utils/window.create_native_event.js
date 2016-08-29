@@ -11,7 +11,7 @@
 		return e;
 	};
 
-	w.createNativeEvent = function(eventType){
+	utils.createNativeEvent = function(eventType){
 		switch (eventType) {
 			case 'mousedown':
 			case 'mouseup':
