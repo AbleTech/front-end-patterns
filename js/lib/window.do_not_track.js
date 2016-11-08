@@ -2,7 +2,11 @@
 // A simple function to call if you want to check the status of the User Agent's
 // current Do Not Track policy setting.
 (function(w, n){
-	w.doNotTrack = function(){
-	  return w.doNotTrack || n.msDoNotTrack || n.doNotTrack || 0;
-	};
-})(window, navigator)
+  function DNT(){
+    if ('msDoNotTrack' in n) return n.msDoNotTrack;
+    if ('doNotTrack' in w)   return w.doNotTrack;
+    if ('doNotTrack' in n)   return n.doNotTrack;
+    return 0;
+  };
+  w.DNT = DNT;
+})(window, navigator);
