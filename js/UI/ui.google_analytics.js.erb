@@ -17,7 +17,7 @@
 				a.async=1;
 				a.src=g;
 				m.parentNode.insertBefore(a,m);
-			})(w,d,'script','//www.google-analytics.com/analytics.js','ga');
+			})(w,d,'script','https://www.google-analytics.com/analytics.js','ga');
 			uiga.startGA();
 		};
 
@@ -26,7 +26,7 @@
 			w.ga('send', 'pageview');
 		};
 
-		if (!w.doNotTrack) {
+		if (DNT() != 1) {
 			uiga.addScript();
 		}
 
