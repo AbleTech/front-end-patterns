@@ -21,14 +21,13 @@
     dialog.elem = null;
 
     /* Private **************************************/
-    function _delEvent(obj, eventName, handler) {
-      obj.removeEventListener(eventName, handler);
+    function _Event(obj, eventName, handler, eventType) {
+      var f = (eventType === 'add' ? 'addEventListener' : 'removeEventListener');
+      obj[f](eventName, handler);
     }
-    function _addEvent(obj, eventName, handler) {
-      obj.addEventListener(eventName, handler);
-    }
+
     function _maskClickHandler(e) {
-      if (e.matches(MASK_SELECTOR)) {
+      if (e.target.matches(MASK_SELECTOR)) {
         dialog.close();
       }
     }
@@ -50,13 +49,12 @@
     function _closeElementClickHandler (e) {
       _toggleDialogEvent(e, dialog.close);
     }
-    function _handlerToElems(array, eventAction, eventName, handler) {
+    function _handlerToElems(array, eventName, handler, eventAction) {
       var i = 0,
-          len = array.length,
-          f = (eventAction === 'add' ? _addEvent : _delEvent );
+          len = array.length;
       for (i; i < len; i++) {
         var elem = array[i];
-        f(elem, eventName, handler);
+        _Event(elem, eventName, handler, eventAction);
       }
     }
     function _triggerCustomEvent(eventName) {
@@ -69,25 +67,25 @@
       dialogMask    = d.querySelector(MASK_SELECTOR);
       closeElements = d.querySelectorAll('[' + ATTR_CLOSE_DIALOG + '="' + dialog.id + '"]');
       openElements  = d.querySelectorAll('[' + ATTR_OPEN_DIALOG + '="' + dialog.id + '"]');
-      _handlerToElems(openElements, 'add', 'click', _openElementClickHandler);
+      _handlerToElems(openElements, 'click', _openElementClickHandler, 'add');
     }
     /************************************************/
 
     dialog.open = function() {
       dialog.elem.classList.add(DIALOG_CLASS_ACTIVE);
       htmlNode.classList.add(HTML_CLASS_ACTIVE);
-      _addEvent(dialogMask, 'click', _maskClickHandler);
-      _addEvent(htmlNode, 'keyup', _escapeKeyUpHandler);
-      _handlerToElems(closeElements, 'add', 'click', _closeElementClickHandler);
+      _Event(dialogMask, 'click', _maskClickHandler, 'add');
+      _Event(htmlNode, 'keyup', _escapeKeyUpHandler, 'add');
+      _handlerToElems(closeElements, 'click', _closeElementClickHandler, 'add');
       _triggerCustomEvent('dialog:opened');
     };
 
     dialog.close = function() {
       dialog.elem.classList.remove(DIALOG_CLASS_ACTIVE);
       htmlNode.classList.remove(HTML_CLASS_ACTIVE);
-      _delEvent(htmlNode, 'keyup', _escapeKeyUpHandler);
-      _delEvent(dialogMask, 'click', _maskClickHandler);
-      _handlerToElems(closeElements, 'del', 'click', _closeElementClickHandler);
+      _Event(htmlNode, 'keyup', _escapeKeyUpHandler);
+      _Event(dialogMask, 'click', _maskClickHandler);
+      _handlerToElems(closeElements, 'click', _closeElementClickHandler);
       _triggerCustomEvent('dialog:closed');
     };
 
