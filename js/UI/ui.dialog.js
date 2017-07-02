@@ -1,24 +1,33 @@
 // Requires ./_ui.js
 // Requires ./lib/element.matches
+// Requires ./lib/window.customevent
 (function(d){
 
   var CONSTANTS = {
     HTML_CLASS_ACTIVE: 'js_dialog_open',
     DIALOG_CLASS_ACTIVE: 'js_dialog_active',
     MASK_SELECTOR: '#dialog_mask',
-    ATTR_CLOSE_DIALOG: 'data-dialog-close'
+    ATTR_CLOSE_DIALOG: 'data-dialog-close',
+    ATTR_OPEN_DIALOG: 'data-dialog-open'
   };
 
-  function Dialogs(id) {
+  function Dialog(id) {
     var dialog  = this;
     dialog.id   = id;
-    dialog.elem = d.querySelector('#' + dialog.id);
+    dialog.elem = null;
 
-    htmlNode = d.documentElement;
-    dialogMask = d.querySelector(CONSTANTS.MASK_SELECTOR);
-    closeElements = d.querySelectorAll('[' + CONSTANTS.ATTR_CLOSE_DIALOG + '="' + dialog.id + '"]');
+    var htmlNode      = d.documentElement,
+        dialogMask    = null,
+        closeElements = null,
+        openElements  = null;
 
     /* Private **************************************/
+    function _delEvent(obj, eventName, handler) {
+      obj.removeEventListener(eventName, handler);
+    }
+    function _addEvent(obj, eventName, handler) {
+      obj.addEventListener(eventName, handler);
+    }
     function _maskClickHandler(e) {
       if (e.matches(CONSTANTS.MASK_SELECTOR)) {
         dialog.close();
@@ -29,12 +38,38 @@
         dialog.close();
       }
     }
-    function _closeElementClickHandler (e) {
-      var elem = e.target;
-      if (elem.href && /^#/.test(elem.href) && d.getElementById(elem.href.split('#')[1])) {
-        e.preventDefault();
+    function _toggleDialogEvent(event, callback) {
+      var elem = event.target;
+      if (elem.matches('[href*="' + elem.href + '"]') && d.getElementById(elem.href.split('#')[1])) {
+        event.preventDefault();
       }
-      dialog.close();
+      callback();
+    }
+    function _openElementClickHandler (e) {
+      _toggleDialogEvent(e, dialog.open);
+    }
+    function _closeElementClickHandler (e) {
+      _toggleDialogEvent(e, dialog.close);
+    }
+    function _handlerToElems(array, eventAction, eventName, handler) {
+      var i = 0,
+          len = array.length,
+          f = (eventAction === 'add' ? _addEvent : _delEvent );
+      for (i; i < len; i++) {
+        var elem = array[i];
+        f(elem, eventName, handler);
+      }
+    }
+    function _triggerCustomEvent(eventName) {
+      var newEvent = new CustomEvent(eventName, {bubbles: true});
+      dialog.elem.dispatchEvent(newEvent);
+    }
+    function _init() {
+      dialog.elem   = d.querySelector('#' + dialog.id);
+      dialogMask    = d.querySelector(CONSTANTS.MASK_SELECTOR);
+      closeElements = d.querySelectorAll('[' + CONSTANTS.ATTR_CLOSE_DIALOG + '="' + dialog.id + '"]');
+      openElements  = d.querySelectorAll('[' + CONSTANTS.ATTR_OPEN_DIALOG + '="' + dialog.id + '"]');
+      dialog._bindOpen();
     }
     /************************************************/
 
@@ -46,40 +81,35 @@
     };
 
     dialog._bindMask = function() {
-      dialogMask.addEventListener('click', _maskClickHandler);
+      _addEvent(dialogMask, 'click', _maskClickHandler);
     };
     dialog._unbindMask = function() {
-      dialogMask.removeEventListener('click', _maskClickHandler);
+      _delEvent(dialogMask, 'click', _maskClickHandler);
     };
 
     dialog._bindEscape = function() {
-      htmlNode.addEventListener('keyup', _escapeKeyUpHandler);
+      _addEvent(htmlNode, 'keyup', _escapeKeyUpHandler);
     };
     dialog._unbindEscape = function() {
-      htmlNode.removeEventListener('keyup', _escapeKeyUpHandler);
+      _delEvent(htmlNode, 'keyup', _escapeKeyUpHandler);
+    };
+
+    dialog._bindOpen = function() {
+      _handlerToElems(openElements, 'add', 'click', _openElementClickHandler);
     };
 
     dialog._bindClose = function() {
-      var i = 0,
-          len = closeElements.length;
-      for (i; i < len; i++) {
-        var elem = closeElements[i];
-        elem.addEventListener('click', _closeElementClickHandler);
-      }
+      _handlerToElems(closeElements, 'add', 'click', _closeElementClickHandler);
     };
     dialog._unbindClose = function() {
-      var i = 0,
-          len = closeElements.length;
-      for (i; i < len; i++) {
-        var elem = closeElements[i];
-        elem.removeEventListener('click', _closeElementClickHandler);
-      }
+      _handlerToElems(closeElements, 'del', 'click', _closeElementClickHandler);
     };
 
     dialog._triggerCloseEvent = function() {
-      var closeEvent = d.createEvent('CustomEvent');
-      closeEvent.initCustomEvent('dialog:closed', true, true);
-      dialog.elem.dispatchEvent(closeEvent);
+      _triggerCustomEvent('dialog:closed');
+    };
+    dialog._triggerOpenEvent = function() {
+      _triggerCustomEvent('dialog:opened');
     };
 
     dialog.open = function() {
@@ -88,6 +118,7 @@
       dialog._bindMask();
       dialog._bindEscape();
       dialog._bindClose();
+      dialog._triggerOpenEvent();
     };
 
     dialog.close = function() {
@@ -98,6 +129,8 @@
       dialog._unbindClose();
       dialog._triggerCloseEvent();
     };
+
+    _init();
 
     return dialog;
 
