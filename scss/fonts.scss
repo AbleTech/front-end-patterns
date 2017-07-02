@@ -1,0 +1,17 @@
+$font_family_name:'BoosterNext';
+$font_system_family_name:'Booster Next FY';
+$font_filename_prefix:'#{$path_fonts}booster-next/booster-next-';
+$font_weighting_values: (400, 500);
+$font_weighting_names:  ('BoosterNextFY-Regular', 'BoosterNextFY-Medium');
+
+@each $weight, $name in zip($font_weighting_values,$font_weighting_names) {
+  @font-face {
+    font-family:$font_family_name;
+    src: local($font_system_family_name),
+         local('#{$name}'),
+         font-url('#{$font_filename_prefix}#{$weight}-2.woff2') format('woff2'),
+         font-url('#{$font_filename_prefix}#{$weight}.woff') format('woff');
+    font-weight:$weight;
+    font-style:normal;
+  }
+}
