@@ -1,7 +1,8 @@
 // Requires ./_ui
-(function(d){
+(function(d, UI){
 
-  var ATTR_ADD_CLASS = 'data-add-class';
+  var
+      ATTR_ADD_CLASS = 'data-add-class';
 
   function AddClass(){
     var ac = this;
@@ -26,4 +27,4 @@
 
   UI.AddClass = AddClass;
 
-})(document);
+})(document, window.UI);

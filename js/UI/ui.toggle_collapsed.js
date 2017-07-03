@@ -1,82 +1,67 @@
-// Requires ../lib/element.classlist.js
-// Requires ./_ui.js
-(function(d){
+// Requires ./_ui
+// Requires ../_lib/element.matches
+(function(d, UI){
 
-	var CONSTANTS = {
-		ATTR_TOGGLE_TARGET: 'data-toggle-collapsed',
-		CLASS_COLLAPSED:    'js_collapsed'
-	};
+  var
+     ATTR_TOGGLE_TARGET = 'data-toggle-collapsed',
+     CLASS_COLLAPSED    = 'js_collapsed';
 
-	function ToggleCollapsed() {
-		var tc = this;
-		tc.elems = []; // nodeList
+  function ToggleCollapsed() {
+    var tc = this;
+    tc.elems = []; // nodeList
 
-		tc.findElements = function(){
-			tc.elems = d.querySelectorAll('[' + CONSTANTS.ATTR_TOGGLE_TARGET + ']');
-		};
+    /* Private *******************************************************/
+    function _clickHandler(e){
+      var elem = e.target;
+      var target = elem.getAttribute(ATTR_TOGGLE_TARGET);
+      if (elem.href) {
+        var anchorTarget = '#' + elem.href.split('#')[1];
+        if (anchorTarget == target){
+          e.preventDefault();
+        }
+      }
+      d.querySelector(target).classList.toggle(CLASS_COLLAPSED)
+    }
+    function _groupCheckedHandler(e) {
+      var elem = e.target;
+      var groupElems = d.querySelectorAll('[name="' + elem.name + '"][' + ATTR_TOGGLE_TARGET + ']');
+      var i = 0,
+          groupElemsLen = groupElems.length;
+      for (i; i < groupElemsLen; i++) {
+        var target = d.querySelector(groupElems[i].getAttribute(ATTR_TOGGLE_TARGET));
+        elem.checked ? target.classList.remove(CLASS_COLLAPSED) : target.classList.add(CLASS_COLLAPSED);
+      }
+    }
+    function _checkedHandler(e){
+      var target = e.target.getAttribute(ATTR_TOGGLE_TARGET);
+      d.querySelector(target).classList.toggle(CLASS_COLLAPSED);
+    }
+    /*****************************************************************/
 
-		tc.checkedHandler = function(elem){
-			elem.addEventListener('change', function(e){
-				var target = event.target.getAttribute(CONSTANTS.ATTR_TOGGLE_TARGET);
-				d.querySelector(target).classList.toggle(CONSTANTS.CLASS_COLLAPSED);
-			});
-		};
+    tc.findElements = function(){
+      tc.elems = d.querySelectorAll('[' + ATTR_TOGGLE_TARGET + ']');
+    };
 
-		tc.groupCheckedHandler = function(elem){
-			elem.addEventListener('change', function(e){
-				var groupElems = d.querySelectorAll('[name="' + elem.name + '"][' + CONSTANTS.ATTR_TOGGLE_TARGET + ']');
-				var i = 0,
-						groupElemsLen = groupElems.length;
-				for (i; i < groupElemsLen; i++) {
-					var target = d.querySelector(groupElems[i].getAttribute(CONSTANTS.ATTR_TOGGLE_TARGET));
-					if (el.checked) {
-						target.classList.remove(CONSTANTS.CLASS_COLLAPSED);
-					} else {
-						target.classList.add(CONSTANTS.CLASS_COLLAPSED);
-					}
-				}
-			});
-		};
+    tc.bindHandlers = function(){
+      var i = 0,
+          elemLen = tc.elems.length;
+      for (i; i < elemLen; i++) {
+        var elem = tc.elems[i];
+        if (elem.matches('[type="checkbox"]')) elem.addEventListener('change', _checkedHandler);
+        if (elem.matches('[type="radio"]')) elem.addEventListener('change', _groupCheckedHandler);
+        if (elem.matches('a')) elem.addEventListener('click', _clickHandler);
+      }
+    };
 
-		tc.clickHandler = function(elem){
-			elem.addEventListener('click', function(e){
-				var target = elem.getAttribute(CONSTANTS.ATTR_TOGGLE_TARGET);
-				if (elem.href) {
-					var anchorTarget = '#' + elem.href.split('#')[1];
-					if (anchorTarget == target){
-						e.preventDefault();
-					}
-				}
-				d.querySelector(target).classList.toggle(CONSTANTS.CLASS_COLLAPSED)
-			});
-		};
+    tc.init = function(){
+      tc.findElements();
+      if (tc.elems.length) {
+        tc.bindHandlers();
+      }
+    };
 
-		tc.bindHandlers = function(){
-			var i = 0,
-					elemLen = tc.elems.length;
-			for (i; i < elemLen; i++) {
-				var elem = tc.elems[i];
-				if (elem.tagName == 'INPUT') {
-					if (elem.type == 'checkbox') {
-						tc.checkedHandler(elem);
-					} else if (elem.type == 'radio') {
-						tc.groupCheckedHandler(elem);
-					}
-				} else if (elem.tagName == 'A') {
-					tc.clickHandler(elem);
-				}
-			}
-		};
+    return tc;
+  }
+  UI.ToggleCollapsed = ToggleCollapsed;
 
-		tc.init = function(){
-			tc.findElements();
-			if (tc.elems.length) {
-				tc.bindHandlers();
-			}
-		};
-
-		return tc;
-	}
-	UI.ToggleCollapsed = ToggleCollapsed;
-
-})(document);
+})(document, window.UI);
